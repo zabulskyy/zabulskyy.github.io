@@ -47,7 +47,7 @@
       const ms = now % 1000;
       const ns = Math.floor((performance.now() % 1) * 1_000_000); // Higher precision
 
-      const display = `${days} days\n${hours} hours\n${minutes} minutes\n${seconds} seconds\n${ms * 1_000 + ns} nanoseconds`;
+      const display = `${days} days\n${hours} hours\n${minutes} minutes\n${seconds}.${ms * 1_000 + ns} seconds`;
 
       document.getElementById("timer").textContent = display;
       requestAnimationFrame(updateTimer);
