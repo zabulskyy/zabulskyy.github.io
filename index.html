@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Time Since Skoro</title>
+  <title>Time Since Fixed Date</title>
   <style>
     body {
-      font-family: sans-serif;
+      font-family: monospace;
       background: #121212;
       color: #00ffcc;
       display: flex;
@@ -20,19 +20,23 @@
       margin-bottom: 1rem;
     }
     .timer {
-      font-size: 2rem;
+      font-size: 1.5rem;
       white-space: pre;
       text-align: center;
     }
   </style>
 </head>
 <body>
-  <h1>Time Since "Skoro"</h1>
+  <h1>Time Since Fixed Date</h1>
   <div class="timer" id="timer"></div>
 
   <script>
-    // Hardcoded reference date (YYYY-MM-DDTHH:MM:SSZ or similar format)
-    const fixedDate = new Date("2022-11-27T00:00:00Z").getTime();
+    // Fixed reference date
+    const fixedDate = new Date("2020-01-01T00:00:00Z").getTime();
+
+    function padNanoseconds(ns) {
+      return ns.toString().padStart(6, "0");
+    }
 
     function updateTimer() {
       const now = Date.now();
@@ -43,11 +47,11 @@
       const minutes = Math.floor((elapsed / (1000 * 60)) % 60);
       const seconds = Math.floor((elapsed / 1000) % 60);
 
-      // Nanoseconds = fractional part of milliseconds * 1,000,000
       const ms = now % 1000;
-      const ns = Math.floor((performance.now() % 1) * 1_000_000); // Higher precision
+      const fractionalNs = Math.floor((performance.now() % 1) * 1_000_000); // for precision
+      const totalNs = ms * 1_000 + Math.floor(fractionalNs / 1); // Total nanoseconds
 
-      const display = `${days} days\n${hours} hours\n${minutes} minutes\n${seconds}.${ms * 1_000 + ns} seconds`;
+      const display = `${days} days\n${hours} hours\n${minutes} minutes\n${seconds}.${padNanoseconds(totalNs)} seconds`;
 
       document.getElementById("timer").textContent = display;
       requestAnimationFrame(updateTimer);
