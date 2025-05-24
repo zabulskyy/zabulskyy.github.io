@@ -22,12 +22,13 @@
     .timer {
       font-size: 1.5rem;
       white-space: pre;
-      text-align: center;
+      text-align: left;
+      width: 10rem;
     }
   </style>
 </head>
 <body>
-  <h1>Time Since Fixed Date</h1>
+  <h1>Time Since "Skoro"</h1>
   <div class="timer" id="timer"></div>
 
   <script>
@@ -47,11 +48,8 @@
       const minutes = Math.floor((elapsed / (1000 * 60)) % 60);
       const seconds = Math.floor((elapsed / 1000) % 60);
 
-      const ms = now % 1000;
-      const fractionalNs = Math.floor((performance.now() % 1) * 1_000_000); // for precision
-      const totalNs = ms * 1_000 + Math.floor(fractionalNs / 1); // Total nanoseconds
-
-      const display = `${days} days\n${hours} hours\n${minutes} minutes\n${seconds}.${padNanoseconds(totalNs)} seconds`;
+      const ms = (now % 1000).toString().padEnd(3, "0");
+      const display = `days:    ${days} \nhours:   ${hours} \nminutes: ${minutes} \nseconds: ${seconds}.${ms}`;
 
       document.getElementById("timer").textContent = display;
       requestAnimationFrame(updateTimer);
