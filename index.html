@@ -8,13 +8,14 @@
     body {
       font-family: monospace;
       background: #121212;
-      color: #00ffcc;
+      color: #95F792;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
       margin: 0;
       flex-direction: column;
+      overflow: hidden;
     }
     h1 {
       margin-bottom: 1rem;
@@ -25,6 +26,24 @@
       text-align: left;
       width: 10rem;
     }
+    .firework {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: explode 1s ease-out forwards;
+    }
+    @keyframes explode {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(20);
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 <body>
@@ -34,25 +53,88 @@
   <script>
     // Fixed reference date
     const fixedDate = new Date("2022-01-12T00:00:00Z").getTime();
+    // Stop date - July 1st, 2025 at 13:13:10
+    const stopDate = new Date("2025-07-01T10:13:00Z").getTime();
+    let fireworksTriggered = false;
+    let lastSecond = false;
 
     function padNanoseconds(ns) {
       return ns.toString().padStart(6, "0");
     }
 
+    function createFirework(x, y, color) {
+      const firework = document.createElement('div');
+      firework.className = 'firework';
+      firework.style.left = x + 'px';
+      firework.style.top = y + 'px';
+      firework.style.backgroundColor = '#' + color;
+      document.body.appendChild(firework);
+      
+      // Remove firework element after animation
+      setTimeout(() => {
+        if (firework.parentNode) {
+          firework.parentNode.removeChild(firework);
+        }
+      }, 1000);
+    }
+
+    function triggerFireworks() {
+      if (fireworksTriggered) return;
+      fireworksTriggered = true;
+      
+      const colors = ['95F792', 'E99D39'];
+      
+      // Create multiple fireworks
+      for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+          const x = Math.random() * window.innerWidth;
+          const y = Math.random() * window.innerHeight;
+          const color = colors[Math.floor(Math.random() * colors.length)];
+          createFirework(x, y, color);
+        }, i * 50);
+      }
+    }
+
     function updateTimer() {
       const now = Date.now();
-      const elapsed = now - fixedDate;
+      let elapsed = now - fixedDate;
+      
+      // Check if we've reached the stop date
+      if (now >= stopDate) {
+        if (!lastSecond) {
+          lastSecond = true;
+          // Let it count for one more second
+          setTimeout(() => {
+            triggerFireworks();
+            // Replace heading with congratulations message
+            const headingElement = document.querySelector("h1");
+            headingElement.textContent = "Skoro nastalo, congratulations";
+            headingElement.style.color = "#E99D39";
+          }, 1000);
+        }
+        // Let it count for one more second before freezing
+        if (now < stopDate + 1000) {
+          elapsed = now - fixedDate;
+        } else {
+          elapsed = stopDate - fixedDate;
+        }
+      }
 
       const days = Math.floor(elapsed / (1000 * 60 * 60 * 24));
       const hours = Math.floor((elapsed / (1000 * 60 * 60)) % 24);
       const minutes = Math.floor((elapsed / (1000 * 60)) % 60);
       const seconds = Math.floor((elapsed / 1000) % 60);
 
-      const ms = (now % 1000).toString().padEnd(3, "0");
+      // Use 0 for milliseconds when frozen, otherwise use current milliseconds
+      const ms = (now >= stopDate + 1000) ? "000" : (now % 1000).toString().padEnd(3, "0");
       const display = `days:    ${days} \nhours:   ${hours} \nminutes: ${minutes} \nseconds: ${seconds}.${ms}`;
 
       document.getElementById("timer").textContent = display;
-      requestAnimationFrame(updateTimer);
+      
+      // Only continue the animation if we haven't reached the stop date
+      if (now < stopDate) {
+        requestAnimationFrame(updateTimer);
+      }
     }
 
     updateTimer();
