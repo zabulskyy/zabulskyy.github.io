@@ -538,9 +538,21 @@ function render() {
   const t = UI_TEXT[state.lang];
   progressEl.textContent = t.resultLabel;
 
-  const scoreLines = TYPE_ORDER
-    .map(t => `${t}: ${state.scores[t] || 0}`)
-    .join("\n");
+  const maxScore = TYPE_ORDER.reduce(
+    (max, type) => Math.max(max, state.scores[type] || 0),
+    0
+  ) || 1;
+
+  const scoreBarsHtml = TYPE_ORDER.map(type => {
+    const score = state.scores[type] || 0;
+    const pct = Math.round((score / maxScore) * 100);
+    return `
+      <div class="muted">${esc(type)}: ${score}</div>
+      <div class="conf-bar">
+        <div class="conf-fill" style="width: ${pct}%"></div>
+      </div>
+    `;
+  }).join("");
 
   const imgFile = TYPE_IMAGES[winner];
   const imgHtml = imgFile
@@ -556,8 +568,7 @@ function render() {
     </div>
     ${imgHtml}
     <div class="hr"></div>
-    <div class="muted">Бали:</div>
-    <pre class="scores">${esc(scoreLines)}</pre>
+    ${scoreBarsHtml}
     <div class="row">
       <button class="btn" id="againBtn">${esc(t.again)}</button>
     </div>
