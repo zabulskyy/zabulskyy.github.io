@@ -2,15 +2,62 @@
 "use strict";
 
 // =========================
-// "База даних" тесту
+// Copy & translations
 // =========================
+const UI_TEXT = {
+  uk: {
+    pageTitle: "Який ти поц - тест",
+    title: "Який ти поц - тест",
+    subtitle: "6 питань. Обирай варіант, в кінці буде результат.",
+    progressLabel: (current, total) => `Питання ${current}/${total}`,
+    chosenLabel: (answered, total) => `Обрано: ${answered} / ${total}`,
+    restart: "Почати заново",
+    resultLabel: "Результат",
+    yourResult: "Твій результат",
+    confidenceLabel: "Достовірність",
+    again: "Пройти ще раз",
+    langToggle: "EN",
+  },
+  en: {
+    pageTitle: "What kind of guy are you - test",
+    title: "What kind of guy are you - test",
+    subtitle: "6 questions. Pick an option, you’ll see the result at the end.",
+    progressLabel: (current, total) => `Question ${current}/${total}`,
+    chosenLabel: (answered, total) => `Chosen: ${answered} / ${total}`,
+    restart: "Start over",
+    resultLabel: "Result",
+    yourResult: "Your result",
+    confidenceLabel: "Confidence",
+    again: "Take the test again",
+    langToggle: "УКР",
+  },
+};
+
 const TYPES = {
-  "СКУФ": "неохайний, неактивний спосіб життя, консервативні погляди",
-  "МАСІК": "стабільний, дбайливий, за фемінізм",
-  "ТЮБІК": "емоційно недоступний, невпевнений, маніпулятор",
-  "ШТРИХ": "небезпечний, пов’язаний з криміналом, контролюючий",
-  "ЧЕЧИК": "нейтральний, приємний в спілкуванні, не викликає емоцій",
-  "АЛЬФОНС": "підступний спокусник, піздабол, охайний та чистоплотний",
+  "СКУФ": {
+    uk: "неохайний, неактивний спосіб життя, консервативні погляди",
+    en: "untidy, inactive lifestyle, conservative views",
+  },
+  "МАСІК": {
+    uk: "стабільний, дбайливий, за фемінізм",
+    en: "steady, caring, pro‑feminism",
+  },
+  "ТЮБІК": {
+    uk: "емоційно недоступний, невпевнений, маніпулятор",
+    en: "emotionally unavailable, insecure, manipulative",
+  },
+  "ШТРИХ": {
+    uk: "небезпечний, пов’язаний з криміналом, контролюючий",
+    en: "dangerous, linked to shady stuff, controlling",
+  },
+  "ЧЕЧИК": {
+    uk: "нейтральний, приємний в спілкуванні, не викликає емоцій",
+    en: "neutral, pleasant to talk to, doesn’t cause strong emotions",
+  },
+  "АЛЬФОНС": {
+    uk: "підступний спокусник, піздабол, охайний та чистоплотний",
+    en: "sly seducer, smooth talker, neat and well‑groomed",
+  },
 };
 
 // Картинки: поклади файли в папку img/ поруч з index.html
@@ -30,68 +77,296 @@ const TYPE_ORDER = ["СКУФ", "МАСІК", "ТЮБІК", "ШТРИХ", "ЧЕ�
 const QUESTIONS = [
   {
     id: "new_place",
-    text: "1) Ти приходиш у нове місце (кафе / офіс / бар). Що робиш першим?",
+    text: {
+      uk: "1) Ти приходиш у нове місце (кафе / офіс / бар). Що робиш першим?",
+      en: "1) You come to a new place (café / office / bar). What do you do first?",
+    },
     choices: [
-      { key: "A", label: "Сідаю куди зручно, не заморочуюсь", points: { "СКУФ": 2, "ЧЕЧИК": 1 } },
-      { key: "B", label: "Дивлюсь, де всім буде комфортно", points: { "МАСІК": 2 } },
-      { key: "C", label: "Перевіряю, де виглядаю найкраще", points: { "АЛЬФОНС": 2 } },
-      { key: "D", label: "Вибираю позицію, щоб все контролювати", points: { "ШТРИХ": 2 } },
-      { key: "E", label: "Просто йду за потоком", points: { "ЧЕЧИК": 2 } },
+      {
+        key: "A",
+        label: {
+          uk: "Сідаю куди зручно, не заморочуюсь",
+          en: "Sit wherever is comfy, don’t overthink it",
+        },
+        points: { "СКУФ": 2, "ЧЕЧИК": 1 },
+      },
+      {
+        key: "B",
+        label: {
+          uk: "Дивлюсь, де всім буде комфортно",
+          en: "Look for a spot where everyone will be comfortable",
+        },
+        points: { "МАСІК": 2 },
+      },
+      {
+        key: "C",
+        label: {
+          uk: "Перевіряю, де виглядаю найкраще",
+          en: "Check where I’ll look the best",
+        },
+        points: { "АЛЬФОНС": 2 },
+      },
+      {
+        key: "D",
+        label: {
+          uk: "Вибираю позицію, щоб все контролювати",
+          en: "Choose a position to keep everything under control",
+        },
+        points: { "ШТРИХ": 2 },
+      },
+      {
+        key: "E",
+        label: {
+          uk: "Просто йду за потоком",
+          en: "Just go with the flow",
+        },
+        points: { "ЧЕЧИК": 2 },
+      },
     ],
   },
   {
     id: "reply_speed",
-    text: "2) Тобі пишуть повідомлення. Ти зазвичай відповідаєш…",
+    text: {
+      uk: "2) Тобі пишуть повідомлення. Ти зазвичай відповідаєш…",
+      en: "2) Someone texts you. You usually reply…",
+    },
     choices: [
-      { key: "A", label: "Коли згадаю", points: { "СКУФ": 2 } },
-      { key: "B", label: "Майже одразу", points: { "МАСІК": 2 } },
-      { key: "C", label: "Коли це вигідно або цікаво", points: { "АЛЬФОНС": 2, "ТЮБІК": 1 } },
-      { key: "D", label: "Коротко і по суті", points: { "ТЮБІК": 2, "ЧЕЧИК": 1 } },
-      { key: "E", label: "Нормально, без поспіху", points: { "ЧЕЧИК": 2 } },
+      {
+        key: "A",
+        label: {
+          uk: "Коли згадаю",
+          en: "When I remember",
+        },
+        points: { "СКУФ": 2 },
+      },
+      {
+        key: "B",
+        label: {
+          uk: "Майже одразу",
+          en: "Almost right away",
+        },
+        points: { "МАСІК": 2 },
+      },
+      {
+        key: "C",
+        label: {
+          uk: "Коли це вигідно або цікаво",
+          en: "When it’s useful or interesting for me",
+        },
+        points: { "АЛЬФОНС": 2, "ТЮБІК": 1 },
+      },
+      {
+        key: "D",
+        label: {
+          uk: "Коротко і по суті",
+          en: "Short and to the point",
+        },
+        points: { "ТЮБІК": 2, "ЧЕЧИК": 1 },
+      },
+      {
+        key: "E",
+        label: {
+          uk: "Нормально, без поспіху",
+          en: "Normally, no rush",
+        },
+        points: { "ЧЕЧИК": 2 },
+      },
     ],
   },
   {
     id: "conflict",
-    text: "3) Хтось наїхав на тебе без причини. Ти:",
+    text: {
+      uk: "3) Хтось наїхав на тебе без причини. Ти:",
+      en: "3) Someone snaps at you for no reason. You:",
+    },
     choices: [
-      { key: "A", label: "Ігнорую, не хочу енергію витрачати", points: { "СКУФ": 2 } },
-      { key: "B", label: "Спокійно поясню і закрию питання", points: { "МАСІК": 2 } },
-      { key: "C", label: "Переверну ситуацію в свою користь", points: { "АЛЬФОНС": 2, "ТЮБІК": 1 } },
-      { key: "D", label: "Поставлю людину на місце", points: { "ШТРИХ": 2 } },
-      { key: "E", label: "Усміхнусь і переведу в жарт", points: { "ЧЕЧИК": 2 } },
+      {
+        key: "A",
+        label: {
+          uk: "Ігнорую, не хочу енергію витрачати",
+          en: "Ignore it, not wasting my energy",
+        },
+        points: { "СКУФ": 2 },
+      },
+      {
+        key: "B",
+        label: {
+          uk: "Спокійно поясню і закрию питання",
+          en: "Calmly explain and close the issue",
+        },
+        points: { "МАСІК": 2 },
+      },
+      {
+        key: "C",
+        label: {
+          uk: "Переверну ситуацію в свою користь",
+          en: "Turn the situation to my advantage",
+        },
+        points: { "АЛЬФОНС": 2, "ТЮБІК": 1 },
+      },
+      {
+        key: "D",
+        label: {
+          uk: "Поставлю людину на місце",
+          en: "Put the person in their place",
+        },
+        points: { "ШТРИХ": 2 },
+      },
+      {
+        key: "E",
+        label: {
+          uk: "Усміхнусь і переведу в жарт",
+          en: "Smile and turn it into a joke",
+        },
+        points: { "ЧЕЧИК": 2 },
+      },
     ],
   },
   {
     id: "free_day",
-    text: "4) У вихідний день без планів ти швидше за все…",
+    text: {
+      uk: "4) У вихідний день без планів ти швидше за все…",
+      en: "4) On a free day with no plans you’ll most likely…",
+    },
     choices: [
-      { key: "A", label: "Залипаю вдома", points: { "СКУФ": 2 } },
-      { key: "B", label: "Роблю щось корисне або організоване", points: { "МАСІК": 2 } },
-      { key: "C", label: "Йду туди, де можуть бути цікаві люди", points: { "АЛЬФОНС": 2 } },
-      { key: "D", label: "Перевіряю, що відбувається навколо і хто де", points: { "ШТРИХ": 2 } },
-      { key: "E", label: "Роблю щось просте і спокійне", points: { "ЧЕЧИК": 2 } },
+      {
+        key: "A",
+        label: {
+          uk: "Залипаю вдома",
+          en: "Stay at home and chill",
+        },
+        points: { "СКУФ": 2 },
+      },
+      {
+        key: "B",
+        label: {
+          uk: "Роблю щось корисне або організоване",
+          en: "Do something useful or organised",
+        },
+        points: { "МАСІК": 2 },
+      },
+      {
+        key: "C",
+        label: {
+          uk: "Йду туди, де можуть бути цікаві люди",
+          en: "Go where there might be interesting people",
+        },
+        points: { "АЛЬФОНС": 2 },
+      },
+      {
+        key: "D",
+        label: {
+          uk: "Перевіряю, що відбувається навколо і хто де",
+          en: "Check what’s going on around and who’s where",
+        },
+        points: { "ШТРИХ": 2 },
+      },
+      {
+        key: "E",
+        label: {
+          uk: "Роблю щось просте і спокійне",
+          en: "Do something simple and calm",
+        },
+        points: { "ЧЕЧИК": 2 },
+      },
     ],
   },
   {
     id: "group_choice",
-    text: "5) Коли компанія вибирає, що робити далі, ти…",
+    text: {
+      uk: "5) Коли компанія вибирає, що робити далі, ти…",
+      en: "5) When the group is deciding what to do next, you…",
+    },
     choices: [
-      { key: "A", label: "Мені ок майже будь-що", points: { "ЧЕЧИК": 2 } },
-      { key: "B", label: "Пропоную нормальний план", points: { "МАСІК": 2 } },
-      { key: "C", label: "Підкидаю найвеселішу ідею", points: { "АЛЬФОНС": 2, "ЧЕЧИК": 1 } },
-      { key: "D", label: "Кажу, як буде краще, і веду процес", points: { "ШТРИХ": 2 } },
-      { key: "E", label: "Просто підтримую розмову", points: { "ЧЕЧИК": 1, "ТЮБІК": 1 } },
+      {
+        key: "A",
+        label: {
+          uk: "Мені ок майже будь-що",
+          en: "I’m fine with almost anything",
+        },
+        points: { "ЧЕЧИК": 2 },
+      },
+      {
+        key: "B",
+        label: {
+          uk: "Пропоную нормальний план",
+          en: "Propose a solid, reasonable plan",
+        },
+        points: { "МАСІК": 2 },
+      },
+      {
+        key: "C",
+        label: {
+          uk: "Підкидаю найвеселішу ідею",
+          en: "Throw in the most fun idea",
+        },
+        points: { "АЛЬФОНС": 2, "ЧЕЧИК": 1 },
+      },
+      {
+        key: "D",
+        label: {
+          uk: "Кажу, як буде краще, і веду процес",
+          en: "Say what’s best and lead the process",
+        },
+        points: { "ШТРИХ": 2 },
+      },
+      {
+        key: "E",
+        label: {
+          uk: "Просто підтримую розмову",
+          en: "Just keep the conversation going",
+        },
+        points: { "ЧЕЧИК": 1, "ТЮБІК": 1 },
+      },
     ],
   },
   {
     id: "after_argument",
-    text: "6) Після невеликої сварки ти зазвичай…",
+    text: {
+      uk: "6) Після невеликої сварки ти зазвичай…",
+      en: "6) After a small argument you usually…",
+    },
     choices: [
-      { key: "A", label: "Чекаю, поки все саме охолоне", points: { "СКУФ": 2, "ТЮБІК": 1 } },
-      { key: "B", label: "Пишу першим(ою), щоб закрити питання", points: { "МАСІК": 2 } },
-      { key: "C", label: "Роблю вигляд, що нічого не сталось", points: { "ТЮБІК": 2 } },
-      { key: "D", label: "Хочу, щоб людина зрозуміла, хто правий", points: { "ШТРИХ": 2 } },
-      { key: "E", label: "Легко переводжу все в нейтраль", points: { "ЧЕЧИК": 2 } },
+      {
+        key: "A",
+        label: {
+          uk: "Чекаю, поки все саме охолоне",
+          en: "Wait until everything cools down on its own",
+        },
+        points: { "СКУФ": 2, "ТЮБІК": 1 },
+      },
+      {
+        key: "B",
+        label: {
+          uk: "Пишу першим(ою), щоб закрити питання",
+          en: "Text first to close the issue",
+        },
+        points: { "МАСІК": 2 },
+      },
+      {
+        key: "C",
+        label: {
+          uk: "Роблю вигляд, що нічого не сталось",
+          en: "Act like nothing happened",
+        },
+        points: { "ТЮБІК": 2 },
+      },
+      {
+        key: "D",
+        label: {
+          uk: "Хочу, щоб людина зрозуміла, хто правий",
+          en: "Want the other person to understand who was right",
+        },
+        points: { "ШТРИХ": 2 },
+      },
+      {
+        key: "E",
+        label: {
+          uk: "Легко переводжу все в нейтраль",
+          en: "Easily bring everything back to neutral",
+        },
+        points: { "ЧЕЧИК": 2 },
+      },
     ],
   },
 ];
@@ -99,7 +374,27 @@ const QUESTIONS = [
 // =========================
 // App state + helpers
 // =========================
-const state = { idx: 0, scores: initScores() };
+function getText(obj, lang) {
+  if (obj == null) return "";
+  if (typeof obj === "string") return obj;
+  return obj[lang] || obj.uk || "";
+}
+
+function createShuffledQuestions() {
+  const arr = QUESTIONS.slice();
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+const state = {
+  idx: 0,
+  scores: initScores(),
+  questions: createShuffledQuestions(),
+  lang: "uk",
+};
 
 function initScores() {
   const s = {};
@@ -171,28 +466,53 @@ function animateConfidence(confidence) {
 const appEl = document.getElementById("app");
 const progressEl = document.getElementById("progress");
 const restartBtn = document.getElementById("restartBtn");
+const langToggleBtn = document.getElementById("langToggleBtn");
+const titleEl = document.getElementById("title");
+const subtitleEl = document.getElementById("subtitle");
+
+function applyLangToStaticUI() {
+  const t = UI_TEXT[state.lang];
+  document.title = t.pageTitle;
+  if (titleEl) titleEl.textContent = t.title;
+  if (subtitleEl) subtitleEl.textContent = t.subtitle;
+  if (restartBtn) restartBtn.textContent = t.restart;
+  if (progressEl && state.idx < state.questions.length) {
+    progressEl.textContent = t.progressLabel(state.idx + 1, state.questions.length);
+  }
+  if (langToggleBtn) langToggleBtn.textContent = t.langToggle;
+}
 
 restartBtn.addEventListener("click", () => {
   state.idx = 0;
   state.scores = initScores();
+  state.questions = createShuffledQuestions();
   render();
 });
 
+if (langToggleBtn) {
+  langToggleBtn.addEventListener("click", () => {
+    state.lang = state.lang === "uk" ? "en" : "uk";
+    applyLangToStaticUI();
+    render();
+  });
+}
+
 function render() {
-  if (state.idx < QUESTIONS.length) {
-    const q = QUESTIONS[state.idx];
-    progressEl.textContent = `Питання ${state.idx + 1}/${QUESTIONS.length}`;
+  if (state.idx < state.questions.length) {
+    const q = state.questions[state.idx];
+    const t = UI_TEXT[state.lang];
+    progressEl.textContent = t.progressLabel(state.idx + 1, state.questions.length);
 
     appEl.innerHTML = `
-      <div class="q">${esc(q.text)}</div>
+      <div class="q">${esc(getText(q.text, state.lang))}</div>
       <div>
         ${q.choices.map(c => `
           <button class="opt" data-key="${esc(c.key)}">
-            <strong>${esc(c.key)})</strong> ${esc(c.label)}
+            <strong>${esc(c.key)})</strong> ${esc(getText(c.label, state.lang))}
           </button>
         `).join("")}
       </div>
-      <div class="muted">Обрано: ${state.idx} / ${QUESTIONS.length}</div>
+      <div class="muted">${esc(t.chosenLabel(state.idx, state.questions.length))}</div>
     `;
 
     for (const btn of appEl.querySelectorAll(".opt")) {
@@ -211,7 +531,8 @@ function render() {
 
   const winner = pickWinner();
   const confidence = computeConfidencePercent(winner);
-  progressEl.textContent = "Результат";
+  const t = UI_TEXT[state.lang];
+  progressEl.textContent = t.resultLabel;
 
   const scoreLines = TYPE_ORDER
     .map(t => `${t}: ${state.scores[t] || 0}`)
@@ -223,18 +544,18 @@ function render() {
     : "";
 
   appEl.innerHTML = `
-    <div class="q">Твій результат: ${esc(winner)}</div>
-    <!-- <div class="muted">${esc(TYPES[winner] || "")}</div> -->
-    <div class="muted">Достовірність: <strong id="confidenceText">0%</strong></div>
-    <div class="conf-bar" role="progressbar" aria-label="Достовірність" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${confidence}">
+    <div class="q">${esc(t.yourResult)}: ${esc(winner)}</div>
+    <div class="muted">${esc(getText(TYPES[winner], state.lang))}</div>
+    <div class="muted">${esc(t.confidenceLabel)}: <strong id="confidenceText">0%</strong></div>
+    <div class="conf-bar" role="progressbar" aria-label="${esc(t.confidenceLabel)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${confidence}">
       <div class="conf-fill" id="confidenceFill" style="width: 0%"></div>
     </div>
     ${imgHtml}
     <div class="hr"></div>
-    <!-- <div class="muted">Бали:</div> -->
-    <!-- <pre class="scores">${esc(scoreLines)}</pre> -->
+    <div class="muted">Бали:</div>
+    <pre class="scores">${esc(scoreLines)}</pre>
     <div class="row">
-      <button class="btn" id="againBtn">Пройти ще раз</button>
+      <button class="btn" id="againBtn">${esc(t.again)}</button>
     </div>
   `;
 
@@ -250,4 +571,5 @@ function render() {
   }
 }
 
+applyLangToStaticUI();
 render();
