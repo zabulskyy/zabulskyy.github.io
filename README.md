@@ -1,1 +1,1 @@
-# skoro-timer
+# pozik

@@ -1,143 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
+<!-- index.html -->
+<!doctype html>
+<html lang="uk">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Time Since Fixed Date</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Який ти поц - тест</title>
   <style>
-    body {
-      font-family: monospace;
-      background: #121212;
-      color: #95F792;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    h1 {
-      margin-bottom: 1rem;
-    }
-    .timer {
-      font-size: 1.5rem;
-      white-space: pre;
-      text-align: left;
-      width: 10rem;
-    }
-    .firework {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      pointer-events: none;
-      animation: explode 1s ease-out forwards;
-    }
-    @keyframes explode {
-      0% {
-        transform: scale(1);
-        opacity: 1;
-      }
-      100% {
-        transform: scale(20);
-        opacity: 0;
-      }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; max-width: 720px; margin: 24px auto; padding: 0 16px; line-height: 1.35; }
+    h1 { font-size: 20px; margin: 0 0 12px; }
+    .card { border: 1px solid #ddd; border-radius: 10px; padding: 14px; margin: 12px 0; }
+    .q { font-weight: 600; margin-bottom: 10px; }
+    .opt { display: block; width: 100%; text-align: left; padding: 10px 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; background: #fff; cursor: pointer; }
+    .opt:hover { background: #f6f6f6; }
+    .muted { color: #666; font-size: 13px; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .btn { padding: 10px 12px; border: 1px solid #ddd; border-radius: 10px; background: #fff; cursor: pointer; }
+    .btn:hover { background: #f6f6f6; }
+    .pill { display: inline-block; padding: 4px 10px; border: 1px solid #ddd; border-radius: 999px; font-size: 12px; color: #444; }
+    .scores { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size: 13px; }
+    .hr { height: 1px; background: #eee; margin: 12px 0; }
+    .result-img { margin-top: 12px; max-width: 100%; border-radius: 10px; border: 1px solid #eee; display: block; }
+    .conf-bar { margin-top: 8px; width: 100%; height: 10px; border-radius: 999px; background: #eee; overflow: hidden; }
+    .conf-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #6aa9ff, #7c5cff); border-radius: 999px; transition: width 900ms cubic-bezier(.2,.8,.2,1); }
+    @media (prefers-reduced-motion: reduce) {
+      .conf-fill { transition: none; }
     }
   </style>
 </head>
 <body>
-  <h1>Time Since "Skoro"</h1>
-  <div class="timer" id="timer"></div>
+  <h1>Який ти поц - тест</h1>
+  <div class="muted">6 питань. Обирай варіант, в кінці буде результат.</div>
 
-  <script>
-    // Fixed reference date
-    const fixedDate = new Date("2022-01-12T00:00:00Z").getTime();
-    // Stop date - July 1st, 2025 at 13:13:10
-    const stopDate = new Date("2025-07-01T10:13:00Z").getTime();
-    let fireworksTriggered = false;
-    let lastSecond = false;
+  <div class="card">
+    <div class="row">
+      <span class="pill" id="progress">Питання 1/6</span>
+      <button class="btn" id="restartBtn" style="margin-left:auto">Почати заново</button>
+    </div>
+    <div class="hr"></div>
 
-    function padNanoseconds(ns) {
-      return ns.toString().padStart(6, "0");
-    }
+    <div id="app"></div>
+  </div>
 
-    function createFirework(x, y, color) {
-      const firework = document.createElement('div');
-      firework.className = 'firework';
-      firework.style.left = x + 'px';
-      firework.style.top = y + 'px';
-      firework.style.backgroundColor = '#' + color;
-      document.body.appendChild(firework);
-      
-      // Remove firework element after animation
-      setTimeout(() => {
-        if (firework.parentNode) {
-          firework.parentNode.removeChild(firework);
-        }
-      }, 1000);
-    }
-
-    function triggerFireworks() {
-      if (fireworksTriggered) return;
-      fireworksTriggered = true;
-      
-      const colors = ['95F792', 'E99D39'];
-      
-      // Create multiple fireworks
-      for (let i = 0; i < 50; i++) {
-        setTimeout(() => {
-          const x = Math.random() * window.innerWidth;
-          const y = Math.random() * window.innerHeight;
-          const color = colors[Math.floor(Math.random() * colors.length)];
-          createFirework(x, y, color);
-        }, i * 50);
-      }
-    }
-
-    function updateTimer() {
-      const now = Date.now();
-      let elapsed = now - fixedDate;
-      
-      // Check if we've reached the stop date
-      if (now >= stopDate) {
-        if (!lastSecond) {
-          lastSecond = true;
-          // Let it count for one more second
-          setTimeout(() => {
-            triggerFireworks();
-            // Replace heading with congratulations message
-            const headingElement = document.querySelector("h1");
-            headingElement.textContent = "Skoro nastalo, congratulations";
-            headingElement.style.color = "#E99D39";
-          }, 1000);
-        }
-        // Let it count for one more second before freezing
-        if (now < stopDate + 1000) {
-          elapsed = now - fixedDate;
-        } else {
-          elapsed = stopDate - fixedDate;
-        }
-      }
-
-      const days = Math.floor(elapsed / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((elapsed / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((elapsed / (1000 * 60)) % 60);
-      const seconds = Math.floor((elapsed / 1000) % 60);
-
-      // Use 0 for milliseconds when frozen, otherwise use current milliseconds
-      const ms = (now >= stopDate + 1000) ? "000" : (now % 1000).toString().padEnd(3, "0");
-      const display = `days:    ${days} \nhours:   ${hours} \nminutes: ${minutes} \nseconds: ${seconds}.${ms}`;
-
-      document.getElementById("timer").textContent = display;
-      
-      // Only continue the animation if we haven't reached the stop date
-      if (now < stopDate) {
-        requestAnimationFrame(updateTimer);
-      }
-    }
-
-    updateTimer();
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>
