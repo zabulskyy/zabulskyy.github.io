@@ -65,7 +65,7 @@ const TYPES = {
 const TYPE_IMAGES = {
   "СКУФ": "skuf.png",
   "МАСІК": "masik.png",
-  "ТЮБІК": "tyubik.png",
+  "ТЮБІК": "tubik.png",
   "ШТРИХ": "shtrykh.png",
   "ЧЕЧИК": "chechyk.png",
   "АЛЬФОНС": "alfons.png",
@@ -78,8 +78,8 @@ const QUESTIONS = [
   {
     id: "new_place",
     text: {
-      uk: "1) Ти приходиш у нове місце (кафе / офіс / бар). Що робиш першим?",
-      en: "1) You come to a new place (café / office / bar). What do you do first?",
+      uk: "Ти приходиш у нове місце (кафе / офіс / бар). Що робиш першим?",
+      en: "You come to a new place (café / office / bar). What do you do first?",
     },
     choices: [
       {
@@ -127,8 +127,8 @@ const QUESTIONS = [
   {
     id: "reply_speed",
     text: {
-      uk: "2) Тобі пишуть повідомлення. Ти зазвичай відповідаєш…",
-      en: "2) Someone texts you. You usually reply…",
+      uk: "Тобі пишуть повідомлення. Ти зазвичай відповідаєш…",
+      en: "Someone texts you. You usually reply…",
     },
     choices: [
       {
@@ -176,8 +176,8 @@ const QUESTIONS = [
   {
     id: "conflict",
     text: {
-      uk: "3) Хтось наїхав на тебе без причини. Ти:",
-      en: "3) Someone snaps at you for no reason. You:",
+      uk: "Хтось наїхав на тебе без причини. Ти:",
+      en: "Someone snaps at you for no reason. You:",
     },
     choices: [
       {
@@ -225,8 +225,8 @@ const QUESTIONS = [
   {
     id: "free_day",
     text: {
-      uk: "4) У вихідний день без планів ти швидше за все…",
-      en: "4) On a free day with no plans you’ll most likely…",
+      uk: "У вихідний день без планів ти швидше за все…",
+      en: "On a free day with no plans you’ll most likely…",
     },
     choices: [
       {
@@ -274,8 +274,8 @@ const QUESTIONS = [
   {
     id: "group_choice",
     text: {
-      uk: "5) Коли компанія вибирає, що робити далі, ти…",
-      en: "5) When the group is deciding what to do next, you…",
+      uk: "Коли компанія вибирає, що робити далі, ти…",
+      en: "When the group is deciding what to do next, you…",
     },
     choices: [
       {
@@ -323,8 +323,8 @@ const QUESTIONS = [
   {
     id: "after_argument",
     text: {
-      uk: "6) Після невеликої сварки ти зазвичай…",
-      en: "6) After a small argument you usually…",
+      uk: "Після невеликої сварки ти зазвичай…",
+      en: "After a small argument you usually…",
     },
     choices: [
       {
