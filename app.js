@@ -380,13 +380,17 @@ function getText(obj, lang) {
   return obj[lang] || obj.uk || "";
 }
 
-function createShuffledQuestions() {
-  const arr = QUESTIONS.slice();
+function shuffleArray(input) {
+  const arr = input.slice();
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
   return arr;
+}
+
+function createShuffledQuestions() {
+  return shuffleArray(QUESTIONS);
 }
 
 const state = {
@@ -470,15 +474,12 @@ const langToggleBtn = document.getElementById("langToggleBtn");
 const titleEl = document.getElementById("title");
 const subtitleEl = document.getElementById("subtitle");
 
-function applyLangToStaticUI() {
+function updateStaticTexts() {
   const t = UI_TEXT[state.lang];
   document.title = t.pageTitle;
   if (titleEl) titleEl.textContent = t.title;
   if (subtitleEl) subtitleEl.textContent = t.subtitle;
   if (restartBtn) restartBtn.textContent = t.restart;
-  if (progressEl && state.idx < state.questions.length) {
-    progressEl.textContent = t.progressLabel(state.idx + 1, state.questions.length);
-  }
   if (langToggleBtn) langToggleBtn.textContent = t.langToggle;
 }
 
@@ -492,21 +493,24 @@ restartBtn.addEventListener("click", () => {
 if (langToggleBtn) {
   langToggleBtn.addEventListener("click", () => {
     state.lang = state.lang === "uk" ? "en" : "uk";
-    applyLangToStaticUI();
     render();
   });
 }
 
 function render() {
+  updateStaticTexts();
+
   if (state.idx < state.questions.length) {
     const q = state.questions[state.idx];
     const t = UI_TEXT[state.lang];
     progressEl.textContent = t.progressLabel(state.idx + 1, state.questions.length);
 
+    const choicesForRender = shuffleArray(q.choices);
+
     appEl.innerHTML = `
       <div class="q">${esc(getText(q.text, state.lang))}</div>
       <div>
-        ${q.choices.map(c => `
+        ${choicesForRender.map(c => `
           <button class="opt" data-key="${esc(c.key)}">
             <strong>${esc(c.key)})</strong> ${esc(getText(c.label, state.lang))}
           </button>
@@ -571,5 +575,4 @@ function render() {
   }
 }
 
-applyLangToStaticUI();
 render();
