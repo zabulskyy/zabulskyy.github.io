@@ -17,6 +17,7 @@ const UI_TEXT = {
     confidenceLabel: "Достовірність",
     again: "Пройти ще раз",
     langToggle: "EN",
+    start: "Почати тест",
   },
   en: {
     pageTitle: "What kind of guy are you - test",
@@ -30,6 +31,7 @@ const UI_TEXT = {
     confidenceLabel: "Confidence",
     again: "Take the test again",
     langToggle: "УКР",
+    start: "Start quiz",
   },
 };
 
@@ -398,6 +400,7 @@ const state = {
   scores: initScores(),
   questions: createShuffledQuestions(),
   lang: "uk",
+  phase: "intro",
 };
 
 function initScores() {
@@ -487,6 +490,7 @@ restartBtn.addEventListener("click", () => {
   state.idx = 0;
   state.scores = initScores();
   state.questions = createShuffledQuestions();
+   state.phase = "intro";
   render();
 });
 
@@ -500,9 +504,39 @@ if (langToggleBtn) {
 function render() {
   updateStaticTexts();
 
+  const t = UI_TEXT[state.lang];
+
+  if (state.phase === "intro") {
+    if (progressEl) progressEl.textContent = "";
+    appEl.innerHTML = `
+      <div class="intro-layout">
+        <div class="intro-media">
+          <img src="img/cover.png" alt="cover" />
+        </div>
+        <div class="intro-main">
+          <div class="q">${esc(t.subtitle)}</div>
+          <div class="row">
+            <button class="btn" id="startBtn">${esc(t.start)}</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const startBtn = document.getElementById("startBtn");
+    if (startBtn) {
+      startBtn.addEventListener("click", () => {
+        state.idx = 0;
+        state.scores = initScores();
+        state.questions = createShuffledQuestions();
+        state.phase = "quiz";
+        render();
+      });
+    }
+    return;
+  }
+
   if (state.idx < state.questions.length) {
     const q = state.questions[state.idx];
-    const t = UI_TEXT[state.lang];
     progressEl.textContent = t.progressLabel(state.idx + 1, state.questions.length);
 
     const choicesForRender = shuffleArray(q.choices);
@@ -535,19 +569,41 @@ function render() {
 
   const winner = pickWinner();
   const confidence = computeConfidencePercent(winner);
-  const t = UI_TEXT[state.lang];
   progressEl.textContent = t.resultLabel;
 
-  const maxScore = TYPE_ORDER.reduce(
-    (max, type) => Math.max(max, state.scores[type] || 0),
+  const winnerScore = state.scores[winner] || 0;
+
+  const adjustedEntries = TYPE_ORDER.map(type => {
+    const raw = state.scores[type] || 0;
+    let adjusted = raw;
+    if (type !== winner && raw === winnerScore && raw > 0) {
+      adjusted = raw - 1;
+    }
+    return { type, raw, adjusted };
+  }).filter(entry => entry.adjusted > 0);
+
+  const maxAdjusted = adjustedEntries.reduce(
+    (max, entry) => Math.max(max, entry.adjusted),
     0
   ) || 1;
 
-  const scoreBarsHtml = TYPE_ORDER.map(type => {
-    const score = state.scores[type] || 0;
-    const pct = Math.round((score / maxScore) * 100);
+  adjustedEntries.sort((a, b) => {
+    if (b.adjusted !== a.adjusted) return b.adjusted - a.adjusted;
+    return TYPE_ORDER.indexOf(a.type) - TYPE_ORDER.indexOf(b.type);
+  });
+
+  const scoreBarsHtml = adjustedEntries.map(entry => {
+    let pct = Math.round((entry.adjusted / maxAdjusted) * 100);
+    if (pct > 0 && pct < 100) {
+      const minDelta = 2;
+      const maxDelta = Math.min(20, pct);
+      if (maxDelta >= minDelta) {
+        const delta = minDelta + Math.floor(Math.random() * (maxDelta - minDelta + 1));
+        pct = Math.max(0, pct - delta);
+      }
+    }
     return `
-      <div class="muted">${esc(type)}: ${score}</div>
+      <div class="muted">${esc(entry.type)}</div>
       <div class="conf-bar">
         <div class="conf-fill" style="width: ${pct}%"></div>
       </div>
@@ -581,6 +637,8 @@ function render() {
     againBtn.addEventListener("click", () => {
       state.idx = 0;
       state.scores = initScores();
+      state.questions = createShuffledQuestions();
+      state.phase = "intro";
       render();
     });
   }

@@ -25,9 +25,13 @@
     @media (prefers-reduced-motion: reduce) {
       .conf-fill { transition: none; }
     }
+    .intro-layout { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .intro-media { flex: 0 0 40%; max-width: 200px; }
+    .intro-media img { width: 100%; height: auto; max-height: 220px; border-radius: 10px; border: 1px solid #eee; display: block; object-fit: cover; }
+    .intro-main { flex: 1 1 180px; }
   </style>
 </head>
-<body>
+  <body>
   <h1 id="title"></h1>
   <div class="muted" id="subtitle"></div>
 
