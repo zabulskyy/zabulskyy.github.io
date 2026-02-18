@@ -512,7 +512,7 @@ function render() {
       <div>
         ${choicesForRender.map(c => `
           <button class="opt" data-key="${esc(c.key)}">
-            <strong>${esc(c.key)})</strong> ${esc(getText(c.label, state.lang))}
+            ${esc(getText(c.label, state.lang))}
           </button>
         `).join("")}
       </div>
